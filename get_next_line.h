@@ -20,7 +20,6 @@
 # endif
 
 int		ft_strlen(char *s);
-int		*ft_save_len(char *save);
 int		ft_strchr(char *s, int c);
 void	*ft_strjoin(char *save, char *buf);
 

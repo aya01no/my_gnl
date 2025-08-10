@@ -35,24 +35,41 @@ static char	*read_to_find_new_line(int fd, BUFFER_SIZE)
 	return (ft_strchr(*save, '\n'));
 }
 
-static void	get_line(void)
-	/*
-	行の切り出し
-	もしループを抜けたなら、saveの中に改行があったか、ファイルを読み終わったか
-	改行まで、もしくは終端までの文字数を数える
-	改行があったら
-	　改行までをlineにコピー
-	　改行以降をnew_saveにコピー
-	old_saveはfree
-	改行がなくて終端までいったら
-	saveの文字を全部lineにいれる
-	new_saveをlineにコピーしてnull
-	old_saveはfree
+static char	*get_line(char *line, char *save)
 
-	lineをreturnする
+{
+	int i;
 
-	*/
-	int get_next_line(int fd, BUFFER_SIZE)
+	line = malloc((ft_strlen(save)) * sizeof(line));
+	i = 0;
+	while (save[i] != '\n')
+	{
+		line[i] = save[i];
+		i++;
+	}
+	return (line);
+}
+
+static char	*save_update(char *old_save)
+{
+	char	*new_save;
+	int		i;
+	int		j;
+
+	i = 0;
+	while (old_save[i] != '\n')
+		i++;
+	j = 0;
+	while (old_save[i] != '\0')
+	{
+		new_save[j] = old_save[i];
+		j++;
+		i++;
+	}
+	return (save);
+}
+
+char	*get_next_line(int fd, BUFFER_SIZE)
 {
 	static char	*save;
 	char		*line;
@@ -62,6 +79,7 @@ static void	get_line(void)
 		free(save);
 		return (NULL);
 	}
-	else
-		get_line();
+	line = get_line(*line, *save);
+	save = save_update(*save);
+	return (line);
 }

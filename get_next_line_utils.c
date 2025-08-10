@@ -27,7 +27,7 @@ int	ft_strlen(char *s)
 	return (s_len);
 }
 
-char	ft_strchr(char *s, int c)
+char	*ft_strchr(char *s, int c)
 {
 	int	i;
 
