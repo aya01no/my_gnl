@@ -16,9 +16,9 @@ int	ft_strlen(char *s)
 {
 	int	s_len;
 
-	s_len == 0;
+	s_len = 0;
 	if (!s)
-		return (NULL);
+		return (0);
 	while (*s)
 	{
 		s_len++;
@@ -44,7 +44,7 @@ char	*ft_strchr(char *s, int c)
 	return (0);
 }
 
-void	*ft_strjoin(char *save, char *buf)
+char	*ft_strjoin(char *save, char *buf)
 {
 	int	i;
 
