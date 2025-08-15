@@ -12,16 +12,17 @@
 
 #include "get_next_line.h"
 
-static char	*read_to_find_new_line(int fd, BUFFER_SIZE, char *save)
+static char	*read_to_find_new_line(int fd, char **save_ptr)
 {
 	int		bytes_read;
 	char	*buf;
+	char	*temp;
 
-	buf = malloc((BUFFER_SIZE + 1) * sizeof(buf));
+	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
 	bytes_read = 1;
-	while (!ft_strchr(save, '\n') && bytes_read != 0)
+	while (!ft_strchr(*save_ptr, '\n') && bytes_read != 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
@@ -30,51 +31,60 @@ static char	*read_to_find_new_line(int fd, BUFFER_SIZE, char *save)
 			return (NULL);
 		}
 		buf[bytes_read] = '\0';
-		ft_strjoin(save, buf);
+		temp = ft_strjoin(*save_ptr, buf);
+		free(*save_ptr);
+		*save_ptr = temp;
 	}
-	return (ft_strchr(save, '\n'));
+	free(buf);
+	return (ft_strchr(*save_ptr, '\n'));
 }
 
 static char	*get_line(char *line, char *save)
-
 {
-	int i;
+	int	i;
 
-	line = malloc((ft_strlen(save)) * sizeof(line));
+	line = malloc((get_line_length(save) + 1) * sizeof(char));
 	i = 0;
 	while (save[i] != '\n')
 	{
 		line[i] = save[i];
 		i++;
 	}
+	line[i] = '\n';
+	i++;
+	line[i] = '\0';
 	return (line);
 }
 
 static char	*save_update(char *old_save)
 {
 	char	*new_save;
-	int		i;
-	int		j;
+	size_t	line_len;
+	size_t	total_len;
+	size_t	remainder_len;
 
-	i = 0;
-	while (old_save[i] != '\n')
-		i++;
-	j = 0;
+	line_len = get_line_length(old_save);
+	total_len = ft_strlen(old_save);
+	remainder_len = total_len - line_len - 1;
+	new_save = malloc((remainder_len + 1) * sizeof(char));
 	while (old_save[i] != '\0')
 	{
 		new_save[j] = old_save[i];
 		j++;
 		i++;
 	}
-	return (save);
+	free(old_save);
+	return (new_save);
 }
 
-char	*get_next_line(int fd, BUFFER_SIZE)
+char	*get_next_line(int fd)
 {
 	static char	*save;
 	char		*line;
 
-	if (!read_to_find_new_line(fd, BUFFER_SIZE, save))
+	if (fd < 0 || BUFFER_SIZE < 0)
+		return (NULL);
+	if (!read_to_find_new_line(fd, &save))
 	{
 		free(save);
 		return (NULL);
@@ -83,33 +93,19 @@ char	*get_next_line(int fd, BUFFER_SIZE)
 	save = save_update(save);
 	return (line);
 }
-int	main(void)
-{
-	char	*line;
-	int		i;
-	int		fd1;
-	int		fd2;
-	int		fd3;
 
-	fd1 = open("tests/test.txt", O_RDONLY);
-	fd2 = open("tests/test2.txt", O_RDONLY);
-	fd3 = open("tests/test3.txt", O_RDONLY);
-	i = 1;
-	while (i < 7)
+void	main(void)
+{
+	int		fd;
+	char	*line;
+
+	fd = open("file.txt", O_RDONLY);
+	if (fd == -1)
+		return (1);
+	while ((line = get_next_line(fd)) != NULL)
 	{
-		line = get_next_line(fd1);
-		printf("line [%02d]: %s", i, line);
+		printf("%s", line);
 		free(line);
-		line = get_next_line(fd2);
-		printf("line [%02d]: %s", i, line);
-		free(line);
-		line = get_next_line(fd3);
-		printf("line [%02d]: %s", i, line);
-		free(line);
-		i++;
 	}
-	close(fd1);
-	close(fd2);
-	close(fd3);
-	return (0);
+	close(fd);
 }

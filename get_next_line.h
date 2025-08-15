@@ -23,5 +23,6 @@
 
 int		ft_strlen(char *s);
 char	*ft_strchr(char *s, int c);
+size_t	get_line_length(char *s);
 char	*ft_strjoin(char *save, char *buf);
 #endif

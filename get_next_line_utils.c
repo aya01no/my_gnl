@@ -14,16 +14,13 @@
 
 int	ft_strlen(char *s)
 {
-	int	s_len;
+	size_t	s_len;
 
 	s_len = 0;
 	if (!s)
 		return (0);
-	while (*s)
-	{
+	while (s)
 		s_len++;
-		s++;
-	}
 	return (s_len);
 }
 
@@ -33,8 +30,6 @@ char	*ft_strchr(char *s, int c)
 
 	if (!s)
 		return (NULL);
-	// if (c == '\0')
-	// 	return ((char *)&s[ft_strlen(s)]);
 	i = 0;
 	while (s[i] != '\0')
 	{
@@ -44,23 +39,38 @@ char	*ft_strchr(char *s, int c)
 	return (0);
 }
 
+size_t	get_line_length(char *s)
+{
+	char	*newline_ptr;
+
+	if (!s)
+		return (NULL);
+	newline_ptr = ft_strchr(s, '\n');
+	if (newline_ptr != NULL)
+		return (newline_ptr - s);
+	return (ft_strlen(s));
+}
+
 char	*ft_strjoin(char *save, char *buf)
 {
-	int	i;
+	int		i;
+	int		j;
+	int		save_len;
+	int		buf_len;
+	char	*temp;
 
-	int save_len; //あとで変数名変える
 	i = 0;
 	if (!save[0])
 		save_len = 0;
 	else
 		save_len = ft_strlen(save);
-	while (buf[i] != '\0')
-	{
-		save[save_len] = buf[i];
-		i++;
-		save_len++;
-	}
-	save[save_len] = '\0';
-	free(buf);
-	return (save);
+	buf_len = ft_strlen(buf);
+	temp = malloc((save_len + buf_len + 1) * sizeof(char));
+	while (save)
+		temp[i++] = save[j++];
+	j = 0;
+	while (buf)
+		temp[i++] = buf[j++];
+	temp[i] = '\0';
+	return (temp);
 }
