@@ -53,30 +53,29 @@ size_t	get_line_length(char *s)
 
 char	*ft_strjoin(char *save, char *buf)
 {
-	int		i;
-	int		j;
-	int		save_len;
-	int		buf_len;
+	size_t	j;
+	size_t	i;
+	size_t	save_len;
+	size_t	buf_len;
 	char	*new_str;
 
-	i = 0;
-	if (!save)
-		save_len = 0;
-	else
+	save_len = 0;
+	if (save)
 		save_len = ft_strlen(save);
 	buf_len = ft_strlen(buf);
 	new_str = malloc((save_len + buf_len + 1) * sizeof(char));
 	if (!new_str)
 		return (NULL);
 	j = 0;
+	i = 0;
 	if (save)
 	{
 		while (save[j] != '\0')
 			new_str[i++] = save[j++];
-		j = 0;
-		while (buf[j] != '\0')
-			new_str[i++] = buf[j++];
-		new_str[i] = '\0';
 	}
+	j = 0;
+	while (buf[j] != '\0')
+		new_str[i++] = buf[j++];
+	new_str[i] = '\0';
 	return (new_str);
 }

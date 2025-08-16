@@ -99,11 +99,10 @@ char	*get_next_line(int fd)
 	save = save_update(save);
 	return (line);
 }
-
 int	main(void)
 {
-	int		fd;
-	char	*line;
+	int fd;
+	char *line;
 
 	line = NULL;
 	fd = open("file.txt", O_RDONLY);
