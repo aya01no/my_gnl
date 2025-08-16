@@ -28,6 +28,8 @@ static void	read_to_find_new_line(int fd, char **save_ptr)
 		if (bytes_read == -1)
 		{
 			free(buf);
+			free(*save_ptr);
+			*save_ptr = NULL;
 			return ;
 		}
 		buf[bytes_read] = '\0';
@@ -38,21 +40,27 @@ static void	read_to_find_new_line(int fd, char **save_ptr)
 	free(buf);
 }
 
-static char	*get_line(char *line, char *save)
+static char	*get_line(char *save)
 {
 	size_t	i;
 	size_t	line_len;
+	char	*line;
 
 	line_len = get_line_length(save);
-	line = malloc((line_len + 2) * sizeof(char));
+	if (save[line_len] == '\n')
+		line = malloc((line_len + 2) * sizeof(char));
+	else
+		line = malloc((line_len + 1) * (sizeof(char)));
+	if (!line)
+		return (NULL);
 	i = 0;
 	while (i < line_len)
 	{
 		line[i] = save[i];
 		i++;
 	}
-	line[i] = '\n';
-	i++;
+	if (save[i] == '\n')
+		line[i++] = '\n';
 	line[i] = '\0';
 	return (line);
 }
@@ -61,20 +69,24 @@ static char	*save_update(char *old_save)
 {
 	char	*new_save;
 	size_t	line_len;
-	size_t	total_len;
-	size_t	remainder_len;
 	size_t	i;
 
 	line_len = get_line_length(old_save);
-	total_len = ft_strlen(old_save);
-	remainder_len = total_len - line_len - 1;
-	new_save = malloc((remainder_len + 1) * sizeof(char));
-	i = 0;
-	while (old_save[line_len + 1 + i] != '\0')
+	if (old_save[line_len] == '\0')
 	{
-		new_save[i] = old_save[line_len + 1 + i];
-		i++;
+		free(old_save);
+		return (NULL);
 	}
+	new_save = malloc((ft_strlen(old_save) - line_len) * sizeof(char));
+	if (!new_save)
+	{
+		free(old_save);
+		return (NULL);
+	}
+	i = 0;
+	line_len++;
+	while (old_save[line_len + 1 + i])
+		new_save[i++] = old_save[line_len + i];
 	new_save[i] = '\0';
 	free(old_save);
 	return (new_save);
@@ -86,7 +98,7 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	line = NULL;
-	if (fd < 0 || BUFFER_SIZE < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	read_to_find_new_line(fd, &save);
 	if (!save || *save == '\0')
@@ -95,14 +107,20 @@ char	*get_next_line(int fd)
 		save = NULL;
 		return (NULL);
 	}
-	line = get_line(line, save);
+	line = get_line(save);
+	if (!line)
+	{
+		free(save);
+		save = NULL;
+		return (NULL);
+	}
 	save = save_update(save);
 	return (line);
 }
 int	main(void)
 {
-	int fd;
-	char *line;
+	int		fd;
+	char	*line;
 
 	line = NULL;
 	fd = open("file.txt", O_RDONLY);
