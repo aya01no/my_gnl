@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-static char	*read_to_find_new_line(int fd, char **save_ptr)
+static void	read_to_find_new_line(int fd, char **save_ptr)
 {
 	int		bytes_read;
 	char	*buf;
@@ -20,7 +20,7 @@ static char	*read_to_find_new_line(int fd, char **save_ptr)
 
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
-		return (NULL);
+		return ;
 	bytes_read = 1;
 	while (!ft_strchr(*save_ptr, '\n') && bytes_read != 0)
 	{
@@ -28,7 +28,7 @@ static char	*read_to_find_new_line(int fd, char **save_ptr)
 		if (bytes_read == -1)
 		{
 			free(buf);
-			return (NULL);
+			return ;
 		}
 		buf[bytes_read] = '\0';
 		temp = ft_strjoin(*save_ptr, buf);
@@ -36,16 +36,17 @@ static char	*read_to_find_new_line(int fd, char **save_ptr)
 		*save_ptr = temp;
 	}
 	free(buf);
-	return (ft_strchr(*save_ptr, '\n'));
 }
 
 static char	*get_line(char *line, char *save)
 {
-	int	i;
+	size_t	i;
+	size_t	line_len;
 
-	line = malloc((get_line_length(save) + 1) * sizeof(char));
+	line_len = get_line_length(save);
+	line = malloc((line_len + 2) * sizeof(char));
 	i = 0;
-	while (save[i] != '\n')
+	while (i < line_len)
 	{
 		line[i] = save[i];
 		i++;
@@ -62,17 +63,19 @@ static char	*save_update(char *old_save)
 	size_t	line_len;
 	size_t	total_len;
 	size_t	remainder_len;
+	size_t	i;
 
 	line_len = get_line_length(old_save);
 	total_len = ft_strlen(old_save);
 	remainder_len = total_len - line_len - 1;
 	new_save = malloc((remainder_len + 1) * sizeof(char));
-	while (old_save[i] != '\0')
+	i = 0;
+	while (old_save[line_len + 1 + i] != '\0')
 	{
-		new_save[j] = old_save[i];
-		j++;
+		new_save[i] = old_save[line_len + 1 + i];
 		i++;
 	}
+	new_save[i] = '\0';
 	free(old_save);
 	return (new_save);
 }
@@ -82,11 +85,14 @@ char	*get_next_line(int fd)
 	static char	*save;
 	char		*line;
 
+	line = NULL;
 	if (fd < 0 || BUFFER_SIZE < 0)
 		return (NULL);
-	if (!read_to_find_new_line(fd, &save))
+	read_to_find_new_line(fd, &save);
+	if (!save || *save == '\0')
 	{
 		free(save);
+		save = NULL;
 		return (NULL);
 	}
 	line = get_line(line, save);
@@ -94,11 +100,12 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-void	main(void)
+int	main(void)
 {
 	int		fd;
 	char	*line;
 
+	line = NULL;
 	fd = open("file.txt", O_RDONLY);
 	if (fd == -1)
 		return (1);

@@ -19,7 +19,7 @@ int	ft_strlen(char *s)
 	s_len = 0;
 	if (!s)
 		return (0);
-	while (s)
+	while (s[s_len] != '\0')
 		s_len++;
 	return (s_len);
 }
@@ -44,7 +44,7 @@ size_t	get_line_length(char *s)
 	char	*newline_ptr;
 
 	if (!s)
-		return (NULL);
+		return (0);
 	newline_ptr = ft_strchr(s, '\n');
 	if (newline_ptr != NULL)
 		return (newline_ptr - s);
@@ -57,20 +57,26 @@ char	*ft_strjoin(char *save, char *buf)
 	int		j;
 	int		save_len;
 	int		buf_len;
-	char	*temp;
+	char	*new_str;
 
 	i = 0;
-	if (!save[0])
+	if (!save)
 		save_len = 0;
 	else
 		save_len = ft_strlen(save);
 	buf_len = ft_strlen(buf);
-	temp = malloc((save_len + buf_len + 1) * sizeof(char));
-	while (save)
-		temp[i++] = save[j++];
+	new_str = malloc((save_len + buf_len + 1) * sizeof(char));
+	if (!new_str)
+		return (NULL);
 	j = 0;
-	while (buf)
-		temp[i++] = buf[j++];
-	temp[i] = '\0';
-	return (temp);
+	if (save)
+	{
+		while (save[j] != '\0')
+			new_str[i++] = save[j++];
+		j = 0;
+		while (buf[j] != '\0')
+			new_str[i++] = buf[j++];
+		new_str[i] = '\0';
+	}
+	return (new_str);
 }
