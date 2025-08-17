@@ -51,19 +51,16 @@ void	*ft_calloc(size_t count, size_t size)
 
 char	*ft_strchr(char *s, int c)
 {
-	int	i;
-
 	if (!s)
 		return (NULL);
-	i = 0;
-	while (s[i] != '\0')
+	while (*s)
 	{
-		if (s[i] == (char)c)
-			return (&s[i]);
-		i++;
+		if (*s == (char)c)
+			return ((char *)s);
+		s++;
 	}
-	if (c == '\0')
-		return (&s[i]);
+	if (*s == (char)c)
+		return ((char *)s);
 	return (NULL);
 }
 
@@ -74,19 +71,23 @@ char	*ft_strjoin(char *s1, char *s2)
 	size_t	i;
 	size_t	j;
 
-	i = 0;
-	total_len = ft_strlen(s1) + ft_strlen(s2);
-	new_str = malloc((total_len + 1) * sizeof(char));
-	if (!new_str || !s1 || !s2)
+	if (!s1 || !s2)
 		return (NULL);
-	while (s1[i] != '\0')
+	total_len = ft_strlen(s1) + ft_strlen(s2);
+	new_str = ft_calloc((total_len + 1), sizeof(char));
+	if (!new_str)
+		return (NULL);
+	i = 0;
+	while (s1 && s1[i] != '\0')
 	{
 		new_str[i] = s1[i];
 		i++;
 	}
 	j = 0;
-	while (s2[j] != '\0')
+	while (s2 && s2[j] != '\0')
 		new_str[i++] = s2[j++];
 	new_str[total_len] = '\0';
+	if (s1)
+		free(s1);
 	return (new_str);
 }

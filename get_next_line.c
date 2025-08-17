@@ -25,25 +25,25 @@ static char	*read_file(int fd, char *save)
 {
 	int		bytes_read;
 	char	*buf;
-	char	*temp;
 
 	if (!save)
 		save = ft_calloc(1, sizeof(char));
 	if (!save)
 		return (NULL);
-	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (!buf)
-		return (free_all(buf, save));
+		return (NULL);
 	bytes_read = 1;
-	while (!(ft_strchr(save, '\n')) && bytes_read > 0)
+	while ((ft_strchr(save, '\n')) == NULL && bytes_read > 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
 			return (free_all(buf, save));
 		buf[bytes_read] = '\0';
-		temp = ft_strjoin(save, buf);
-		free(save);
-		save = temp;
+		if (save && buf)
+			save = ft_strjoin(save, buf);
+		if (!save)
+			return (NULL);
 	}
 	free(buf);
 	return (save);
@@ -55,11 +55,14 @@ static char	*get_line(char *save)
 	char	*line;
 
 	i = 0;
-	if (!save[i])
+	if (!save || !save[i])
 		return (NULL);
 	while (save[i] && save[i] != '\n')
 		i++;
-	line = malloc((i + 2) * sizeof(char));
+	if (save[i] == '\n')
+		line = ft_calloc(i + 2, sizeof(char));
+	else
+		line = ft_calloc(i + 1, sizeof(char));
 	if (!line)
 		return (NULL);
 	i = 0;
@@ -68,7 +71,7 @@ static char	*get_line(char *save)
 		line[i] = save[i];
 		i++;
 	}
-	if (save[i] && save[i] == '\n')
+	if (save[i] == '\n')
 		line[i++] = '\n';
 	line[i] = '\0';
 	return (line);
@@ -77,28 +80,27 @@ static char	*get_line(char *save)
 static char	*save_update(char *old_save)
 {
 	char	*new_save;
+	size_t	line_len;
 	size_t	j;
 	size_t	i;
 
+	line_len = ft_strlen(old_save);
 	i = 0;
 	while (old_save[i] && old_save[i] != '\n')
 		i++;
 	if (!old_save[i])
 	{
 		free(old_save);
+		old_save = NULL;
 		return (NULL);
 	}
-	new_save = malloc((ft_strlen(old_save) - i + 1) * sizeof(char));
+	new_save = ft_calloc((line_len - i + 1), sizeof(char));
 	if (!new_save)
-	{
-		free(old_save);
 		return (NULL);
-	}
 	i++;
 	j = 0;
 	while (old_save[i])
 		new_save[j++] = old_save[i++];
-	new_save[j] = '\0';
 	free(old_save);
 	return (new_save);
 }
@@ -109,17 +111,11 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	line = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
 	save = read_file(fd, save);
 	if (!save)
 		return (NULL);
-	if (save[0] == '\0')
-	{
-		free(save);
-		save = NULL;
-		return (NULL);
-	}
 	line = get_line(save);
 	save = save_update(save);
 	return (line);
