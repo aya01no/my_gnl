@@ -6,7 +6,7 @@
 /*   By: ayayamad <ayayamad@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 06:29:24 by ayayamad          #+#    #+#             */
-/*   Updated: 2025/08/17 13:04:15 by ayayamad         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:06:51 by ayayamad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,31 @@ int	ft_strlen(char *s)
 	return (s_len);
 }
 
+void	ft_bzero(void *s, size_t n)
+{
+	char	*str;
+	size_t	i;
+
+	str = (char *)s;
+	i = 0;
+	while (i < n)
+	{
+		str[i] = '\0';
+		i++;
+	}
+}
+
+void	*ft_calloc(size_t elementCount, size_t elementSize)
+{
+	char	*res;
+
+	res = malloc(elementSize * elementCount);
+	if (!res)
+		return (NULL);
+	ft_bzero(res, elementSize * elementCount);
+	return (res);
+}
+
 char	*ft_strchr(char *s, int c)
 {
 	int	i;
@@ -39,17 +64,6 @@ char	*ft_strchr(char *s, int c)
 	return (0);
 }
 
-size_t	get_line_length(char *s)
-{
-	char	*newline_ptr;
-
-	if (!s)
-		return (0);
-	newline_ptr = ft_strchr(s, '\n');
-	if (newline_ptr != NULL)
-		return (newline_ptr - s);
-	return (ft_strlen(s));
-}
 
 char	*ft_strjoin(char *s1, char *s2)
 {

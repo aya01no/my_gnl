@@ -6,7 +6,7 @@
 /*   By: ayayamad <ayayamad@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 03:39:54 by ayayamad          #+#    #+#             */
-/*   Updated: 2025/08/17 13:04:25 by ayayamad         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:08:16 by ayayamad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@ static char	*read_file(int fd, char *save)
 	char	*temp;
 
 	if (!save)
-		save = malloc(1 * sizeof(char));
+		save = ft_calloc(1, sizeof(char));
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buf)
+	if (!buf || !save)
 		return (NULL);
 	bytes_read = 1;
-	while (!(ft_strchr(buf, '\n')) && bytes_read > 0)
+	while (!(ft_strchr(save, '\n')) && bytes_read > 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
@@ -34,7 +34,7 @@ static char	*read_file(int fd, char *save)
 		}
 		buf[bytes_read] = '\0';
 		temp = ft_strjoin(save, buf);
-		free(buf);
+		free(save);
 		save = temp;
 	}
 	free(buf);
@@ -62,6 +62,7 @@ static char	*get_line(char *save)
 	}
 	if (save[i] && save[i] == '\n')
 		line[i++] = '\n';
+	line[i]='\0';
 	return (line);
 }
 
@@ -72,7 +73,7 @@ static char	*save_update(char *old_save)
 	size_t	i;
 
 	i = 0;
-	while (old_save[i] && old_save[i] != '\0')
+	while (old_save[i] && old_save[i] != '\n')
 		i++;
 	if (!old_save[i])
 	{
@@ -89,6 +90,7 @@ static char	*save_update(char *old_save)
 	j = 0;
 	while (old_save[i])
 		new_save[j++] = old_save[i++];
+	new_save[j] = '\0';
 	free(old_save);
 	return (new_save);
 }
