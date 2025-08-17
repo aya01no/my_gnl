@@ -24,7 +24,7 @@ static char	*read_file(int fd, char *save)
 	if (!buf)
 		return (NULL);
 	bytes_read = 1;
-	while (!(ft_strchr(buf, '\n')) || bytes_read > 0)
+	while (!(ft_strchr(buf, '\n')) && bytes_read > 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
@@ -47,7 +47,7 @@ static char	*get_line(char *save)
 	char	*line;
 
 	i = 0;
-	if (save[i])
+	if (!save[i])
 		return (NULL);
 	while (save[i] && save[i] != '\n')
 		i++;
@@ -72,7 +72,7 @@ static char	*save_update(char *old_save)
 	size_t	i;
 
 	i = 0;
-	while (old_save[i] && old_save[i] == '\0')
+	while (old_save[i] && old_save[i] != '\0')
 		i++;
 	if (!old_save[i])
 	{
