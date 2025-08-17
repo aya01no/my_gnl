@@ -6,7 +6,7 @@
 /*   By: ayayamad <ayayamad@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 06:29:24 by ayayamad          #+#    #+#             */
-/*   Updated: 2025/08/10 14:41:29 by ayayamad         ###   ########.fr       */
+/*   Updated: 2025/08/17 12:52:40 by ayayamad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,31 +51,24 @@ size_t	get_line_length(char *s)
 	return (ft_strlen(s));
 }
 
-char	*ft_strjoin(char *save, char *buf)
+char	*ft_strjoin(char *s1, char *s2)
 {
-	size_t	j;
-	size_t	i;
-	size_t	save_len;
-	size_t	buf_len;
-	char	*new_str;
+	char *new_str;
+	size_t total_len;
+	size_t i;
+	size_t j;
 
-	save_len = 0;
-	if (save)
-		save_len = ft_strlen(save);
-	buf_len = ft_strlen(buf);
-	new_str = malloc((save_len + buf_len + 1) * sizeof(char));
-	if (!new_str)
-		return (NULL);
-	j = 0;
+
 	i = 0;
-	if (save)
-	{
-		while (save[j] != '\0')
-			new_str[i++] = save[j++];
-	}
+	total_len = ft_strlen(s1) + ft_strlen(s2);
+	new_str = malloc((total_len + 1) * sizeof(char));
+	if (!new_str || !s1 || !s2)
+		return (NULL);
+	while (s1[i] != '\0')
+		new_str[i++] = s1[i++];
 	j = 0;
-	while (buf[j] != '\0')
-		new_str[i++] = buf[j++];
-	new_str[i] = '\0';
+	while (s2[j] != '\0')
+		new_str[i++] = s2[j++];
+	new_str[total_len] = '\0';
 	return (new_str);
 }

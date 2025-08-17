@@ -6,7 +6,7 @@
 /*   By: ayayamad <ayayamad@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 06:33:44 by ayayamad          #+#    #+#             */
-/*   Updated: 2025/08/10 14:28:55 by ayayamad         ###   ########.fr       */
+/*   Updated: 2025/08/17 12:54:40 by ayayamad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,5 @@
 
 int		ft_strlen(char *s);
 char	*ft_strchr(char *s, int c);
-size_t	get_line_length(char *s);
-char	*ft_strjoin(char *save, char *buf);
+char	*ft_strjoin(char *s1, char *s2);
 #endif
