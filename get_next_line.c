@@ -12,6 +12,15 @@
 
 #include "get_next_line.h"
 
+static char	*free_all(char *buf, char *buffer)
+{
+	if (buf)
+		free(buf);
+	if (buffer)
+		free(buffer);
+	return (NULL);
+}
+
 static char	*read_file(int fd, char *save)
 {
 	int		bytes_read;
@@ -20,18 +29,17 @@ static char	*read_file(int fd, char *save)
 
 	if (!save)
 		save = ft_calloc(1, sizeof(char));
-	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buf || !save)
+	if (!save)
 		return (NULL);
+	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buf)
+		return (free_all(buf, save));
 	bytes_read = 1;
 	while (!(ft_strchr(save, '\n')) && bytes_read > 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
-		{
-			free(buf);
-			return (NULL);
-		}
+			return (free_all(buf, save));
 		buf[bytes_read] = '\0';
 		temp = ft_strjoin(save, buf);
 		free(save);
@@ -101,11 +109,17 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	line = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	save = read_file(fd, save);
 	if (!save)
 		return (NULL);
+	if (save[0] == '\0')
+	{
+		free(save);
+		save = NULL;
+		return (NULL);
+	}
 	line = get_line(save);
 	save = save_update(save);
 	return (line);

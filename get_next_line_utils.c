@@ -74,12 +74,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	size_t	i;
 	size_t	j;
 
-	if (!s1 && !s2)
-		return (NULL);
 	i = 0;
 	total_len = ft_strlen(s1) + ft_strlen(s2);
 	new_str = malloc((total_len + 1) * sizeof(char));
-	if (!new_str)
+	if (!new_str || !s1 || !s2)
 		return (NULL);
 	while (s1[i] != '\0')
 	{
