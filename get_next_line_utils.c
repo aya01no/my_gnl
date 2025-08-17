@@ -38,15 +38,15 @@ void	ft_bzero(void *s, size_t n)
 	}
 }
 
-void	*ft_calloc(size_t elementCount, size_t elementSize)
+void	*ft_calloc(size_t count, size_t size)
 {
-	char	*res;
+	char	*temp;
 
-	res = malloc(elementSize * elementCount);
-	if (!res)
+	temp = malloc(size * count);
+	if (!temp)
 		return (NULL);
-	ft_bzero(res, elementSize * elementCount);
-	return (res);
+	ft_bzero(temp, size * count);
+	return (temp);
 }
 
 char	*ft_strchr(char *s, int c)
@@ -63,7 +63,6 @@ char	*ft_strchr(char *s, int c)
 	}
 	return (0);
 }
-
 
 char	*ft_strjoin(char *s1, char *s2)
 {
