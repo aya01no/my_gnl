@@ -22,7 +22,7 @@
 #  define BUFFER_SIZE 1000
 # endif
 
-int		ft_strlen(char *s);
+size_t	ft_strlen(char *s);
 char	*ft_strchr(char *s, int c);
 char	*ft_strjoin(char *s1, char *s2);
 void	ft_bzero(void *s, size_t n);

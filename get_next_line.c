@@ -62,7 +62,7 @@ static char	*get_line(char *save)
 	}
 	if (save[i] && save[i] == '\n')
 		line[i++] = '\n';
-	line[i]='\0';
+	line[i] = '\0';
 	return (line);
 }
 
