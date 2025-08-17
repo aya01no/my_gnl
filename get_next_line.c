@@ -12,17 +12,17 @@
 
 #include "get_next_line.h"
 
-static char	*read_to_find_new_line(int fd, char *save)
+static char	*read_file(int fd, char *save)
 {
 	int		bytes_read;
 	char	*buf;
-	char *temp;
+	char	*temp;
 
 	if (!save)
-	save = malloc(1 * 1);
+		save = malloc(1 * sizeof(char));
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
-		return ;
+		return (NULL);
 	bytes_read = 1;
 	while (!(ft_strchr(buf, '\n')) || bytes_read > 0)
 	{
@@ -30,15 +30,15 @@ static char	*read_to_find_new_line(int fd, char *save)
 		if (bytes_read == -1)
 		{
 			free(buf);
-			return(NULL) ;
+			return (NULL);
 		}
 		buf[bytes_read] = '\0';
-		temp = ft_strjoin(*save, buf);
+		temp = ft_strjoin(save, buf);
 		free(buf);
 		save = temp;
 	}
 	free(buf);
-	return(save);
+	return (save);
 }
 
 static char	*get_line(char *save)
@@ -48,9 +48,9 @@ static char	*get_line(char *save)
 
 	i = 0;
 	if (save[i])
-	return(NULL);
-	while (save[i] && save[i] !='\n')
-	i++;
+		return (NULL);
+	while (save[i] && save[i] != '\n')
+		i++;
 	line = malloc((i + 2) * sizeof(char));
 	if (!line)
 		return (NULL);
@@ -73,8 +73,8 @@ static char	*save_update(char *old_save)
 
 	i = 0;
 	while (old_save[i] && old_save[i] == '\0')
-	i++;
-	if(!old_save[i])
+		i++;
+	if (!old_save[i])
 	{
 		free(old_save);
 		return (NULL);
@@ -101,26 +101,10 @@ char	*get_next_line(int fd)
 	line = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	save = read_to_find_new_line(fd, &save);
+	save = read_file(fd, save);
 	if (!save)
 		return (NULL);
 	line = get_line(save);
 	save = save_update(save);
 	return (line);
-}
-int	main(void)
-{
-	int		fd;
-	char	*line;
-
-	line = NULL;
-	fd = open("file.txt", O_RDONLY);
-	if (fd == -1)
-		return (1);
-	while ((line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", line);
-		free(line);
-	}
-	close(fd);
 }
