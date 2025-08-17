@@ -6,7 +6,7 @@
 /*   By: ayayamad <ayayamad@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 03:39:54 by ayayamad          #+#    #+#             */
-/*   Updated: 2025/08/17 15:08:16 by ayayamad         ###   ########.fr       */
+/*   Updated: 2025/08/18 08:13:33 by ayayamad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,20 +28,17 @@ static char	*read_file(int fd, char *save)
 
 	if (!save)
 		save = ft_calloc(1, sizeof(char));
-	if (!save)
-		return (NULL);
 	buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
-	if (!buf)
+	if (!buf || !save)
 		return (NULL);
 	bytes_read = 1;
-	while ((ft_strchr(save, '\n')) == NULL && bytes_read > 0)
+	while (!(ft_strchr(save, '\n')) && bytes_read > 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
 			return (free_all(buf, save));
 		buf[bytes_read] = '\0';
-		if (save && buf)
-			save = ft_strjoin(save, buf);
+		save = ft_strjoin(save, buf);
 		if (!save)
 			return (NULL);
 	}
@@ -51,18 +48,17 @@ static char	*read_file(int fd, char *save)
 
 static char	*get_line(char *save)
 {
-	size_t	i;
+	int	i;
+	int len;
 	char	*line;
 
 	i = 0;
 	if (!save || !save[i])
 		return (NULL);
-	while (save[i] && save[i] != '\n')
-		i++;
-	if (save[i] == '\n')
-		line = ft_calloc(i + 2, sizeof(char));
-	else
-		line = ft_calloc(i + 1, sizeof(char));
+	len = 0;
+	while (save[len] && save[len] != '\n')
+		len++;
+	line = ft_calloc(len + 2, sizeof(char));
 	if (!line)
 		return (NULL);
 	i = 0;
@@ -73,18 +69,17 @@ static char	*get_line(char *save)
 	}
 	if (save[i] == '\n')
 		line[i++] = '\n';
-	line[i] = '\0';
 	return (line);
 }
 
 static char	*save_update(char *old_save)
 {
 	char	*new_save;
-	size_t	line_len;
 	size_t	j;
 	size_t	i;
 
-	line_len = ft_strlen(old_save);
+	if (!old_save)
+		return(NULL);
 	i = 0;
 	while (old_save[i] && old_save[i] != '\n')
 		i++;
@@ -94,7 +89,7 @@ static char	*save_update(char *old_save)
 		old_save = NULL;
 		return (NULL);
 	}
-	new_save = ft_calloc((line_len - i + 1), sizeof(char));
+	new_save = ft_calloc((ft_strlen(old_save) - i + 1), sizeof(char));
 	if (!new_save)
 		return (NULL);
 	i++;
