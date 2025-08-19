@@ -28,19 +28,21 @@ static char	*read_file(int fd, char *save)
 
 	if (!save)
 		save = ft_calloc(1, sizeof(char));
+	if (!save)
+		free(save);
 	buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
-	if (!buf || !save)
-		return (NULL);
+	if (!buf)
+		return (free_all(save, buf));
 	bytes_read = 1;
 	while (!(ft_strchr(save, '\n')) && bytes_read > 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
-			return (free_all(buf, save));
+			return (free_all(save, buf));
 		buf[bytes_read] = '\0';
 		save = ft_strjoin(save, buf);
 		if (!save)
-			return (NULL);
+			return (free_all(save, buf));
 	}
 	free(buf);
 	return (save);
@@ -48,19 +50,26 @@ static char	*read_file(int fd, char *save)
 
 static char	*get_line(char *save)
 {
-	int	i;
-	int len;
+	int		i;
+	int		len;
 	char	*line;
 
 	i = 0;
+	// save だけじゃなくてsave[i] も見るのはなんで？
+	//そもそも!save[i]になるのはどんなとき
 	if (!save || !save[i])
 		return (NULL);
 	len = 0;
 	while (save[len] && save[len] != '\n')
 		len++;
-	line = ft_calloc(len + 2, sizeof(char));
+	if (save[len] == '\n')
+		len + 1;
+	line = ft_calloc(len + 1, sizeof(char));
 	if (!line)
+	{
+		free(save);
 		return (NULL);
+	}
 	i = 0;
 	while (save[i] && save[i] != '\n')
 	{
@@ -79,7 +88,7 @@ static char	*save_update(char *old_save)
 	size_t	i;
 
 	if (!old_save)
-		return(NULL);
+		return (NULL);
 	i = 0;
 	while (old_save[i] && old_save[i] != '\n')
 		i++;
